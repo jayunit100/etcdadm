@@ -22,13 +22,31 @@ etcdadm is a command-line tool for operating an etcd cluster. It makes it easy t
 
 ## Getting Started
 
-### Building
+### Quick start: How to quickly create a production etcd cluster using etcdadm
 
-```
-go get -u sigs.k8s.io/etcdadm
-```
+- Build a release of etcdadm.  Assuming your nodes are linux, run `GOOS=linux make container-build`.
+- copy the created `etcdadm` file it to every node on your cluster.
+- Create a new cluster on your first node.
+- On successive nodes, just run "Adding a member" instructions below.
 
-### Creating a new cluster
+### Building, Contributing
+
+#### As a developer
+- Setup Golang: The fastest way to do this is using https://github.com/travis-ci/gimme
+- Then run `go get -u sigs.k8s.io/etcdadm`
+
+#### As a user
+- Build in docker, it's easy ! Just run `make container-build`.
+- The outputted binary will be natively runnable on your mac or linux machine.
+
+### Contributing
+- Follow the above directions, 
+- cd $GOPATH/github.com/sigs.k8s.io/etcdadm
+- Submit a PR !
+
+## Creating a new cluster
+
+### Step 1: Bootstrapping your first member
 
 1. Copy `etcdadm` to each machine that will become a member.
 2. Choose one machine and run
@@ -37,7 +55,11 @@ go get -u sigs.k8s.io/etcdadm
 etcdadm init
 ```
 
-### Adding a member
+You now have an etcd 'cluster' which is usable, of size 1.
+
+### Step 2: Adding a member
+
+Although not necessary, it's obviously a good idea to have more then 1 node in your cluster.
 
 1. Copy the CA certificate and key from any machine in the cluster to the machine being added.
 2. Choose a cluster endpoint (i.e. client URL of some member) and run
@@ -48,7 +70,7 @@ etcdadm join <endpoint>
 
 ### Removing a member
 
-On the machine being removed, run
+From time to time, you need to remove etcd nodes.  On the machine being removed, run
 
 ```
 etcdadm reset
